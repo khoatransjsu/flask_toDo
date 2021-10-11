@@ -8,6 +8,8 @@ DB_NAME = "students"
 DB_USER = "postgres"
 DB_PASS = "khoa123"
 
+app.secret_key = "secret"
+
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
  
 @app.route('/')
@@ -59,6 +61,15 @@ def update_student(id):
         flash('Student Updated Successfully')
         conn.commit()
         return redirect(url_for('Index'))
+
+@app.route('/delete/<string:id>', methods = ['POST','GET'])
+def delete_student(id):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+   
+    cur.execute('DELETE FROM students WHERE id = {0}'.format(id))
+    conn.commit()
+    flash('Student Removed Successfully')
+    return redirect(url_for('Index'))
 
 if __name__ == '__main__':
     app.debug = True
